@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from pages.dashboard import show_dashboard
+from pages.ingredients import show_ingredients
 
 products_data = {
     "Product": ["Milk", "Eggs", "Spinach", "Chicken Breast"],
@@ -83,14 +84,14 @@ def pantry_dashboard():
         """, unsafe_allow_html=True)
 
     st.write("</table>", unsafe_allow_html=True)
-
+    
 def profile_page():
     st.title("Profile Page")
     st.write("Edit your profile information.")
 
 def main():
     st.sidebar.title("Smart Pantry")
-    options = ["Sign Up", "Sign In", "My Pantry Dashboard", "Profile Page", "Dashboard"]
+    options = ["Sign Up", "Sign In", "My Pantry Dashboard", "Profile Page", "Dashboard", "Ingredients"]
     choice = st.sidebar.radio("Select a Page", options)
 
     if choice == "Sign Up":
@@ -103,6 +104,8 @@ def main():
         profile_page()
     elif choice == "Dashboard":
         show_dashboard()
+    elif choice == "Ingredients":
+        show_ingredients()
 
 if __name__ == "__main__":
     main()
