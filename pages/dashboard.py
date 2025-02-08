@@ -31,6 +31,53 @@ st.markdown("""
     .recipe-item:last-child {
         border-bottom: none;
     }
+    
+    /* Style for expanders */
+    .streamlit-expanderHeader {
+        font-size: 1em;
+        color: #333333;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    
+    .streamlit-expanderContent {
+        background-color: #ffffff;
+        padding: 10px;
+        border-radius: 0 0 5px 5px;
+    }
+
+    /* Custom button width styles */
+    .edit-btn {
+        width: 80px !important;
+    }
+    .add-btn {
+        width: 70px !important;
+    }
+    .view-all-btn {
+        width: 100px !important;
+    }
+    .more-btn {
+        width: 80px !important;
+    }
+    
+    /* Ensure buttons stay right-aligned */
+    div.row-widget.stButton {
+        width: auto !important;
+        min-width: auto !important;
+    }
+
+    /* Updated button width styles */
+    .stButton > button {
+        min-width: 120px !important;  /* Increased from 110px to 120px */
+        white-space: nowrap !important;
+        padding: 0.25rem 0.5rem !important;  /* Reduce padding to save space */
+        text-align: center !important;
+    }
+    
+    /* Remove the custom button width classes since we're using a consistent width */
+    .edit-btn, .add-btn, .view-all-btn, .more-btn {
+        display: none;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -52,14 +99,12 @@ def show_dashboard():
     # Metrics Widget
     with st.container():
         st.markdown('<div class="metrics-container">', unsafe_allow_html=True)
-        
-        # Create columns for header and button
-        header_col, button_col = st.columns([0.85, 0.15])
-        with header_col:
+        col1, col2 = st.columns([0.88, 0.12])  # More space for "Edit" button
+        with col1:
             st.subheader("Your Health Goals")
-        with button_col:
-            st.button("Edit", key="edit_metrics")
-            
+        with col2:
+            st.button("Edit", key="edit_metrics", help="Edit goals", use_container_width=False)
+        
         # Existing metrics columns
         col1, col2 = st.columns(2)
         
@@ -85,14 +130,16 @@ def show_dashboard():
             )
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # Pantry Quick View
+    # Modify the Pantry Quick View section
     with st.container():
         st.markdown('<div class="metrics-container">', unsafe_allow_html=True)
-        col1, col2 = st.columns([0.85, 0.15])
+        col1, col2, col3 = st.columns([0.76, 0.12, 0.12])  # Equal space for "Add" and "View All"
         with col1:
             st.subheader("Pantry Overview")
         with col2:
-            st.button("View All", key="view_pantry")
+            st.button("Add", key="add_pantry", help="Add items", use_container_width=False)
+        with col3:
+            st.button("View All", key="view_pantry", help="View all items", use_container_width=False)
             
         # Sample pantry data - Replace with actual data from your database
         pantry_df = pd.DataFrame({
@@ -109,25 +156,42 @@ def show_dashboard():
         )
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # Recent Recipes
+    # Update the recipes display
     with st.container():
         st.markdown('<div class="metrics-container">', unsafe_allow_html=True)
-        st.subheader("Recent Recipes")
+        col1, col2 = st.columns([0.88, 0.12])  # More space for "More" button
+        with col1:
+            st.subheader("My Recipes")
+        with col2:
+            st.button("More", key="view_recipes", help="View more recipes", use_container_width=False)
         
-        # Sample recipes data - Replace with actual data
+        # Sample recipes data - Remove dates from display
         recipes = [
-            {"name": "Chicken Stir Fry", "calories": 450, "date": "2025-02-07"},
-            {"name": "Quinoa Bowl", "calories": 380, "date": "2025-02-06"},
-            {"name": "Greek Salad", "calories": 320, "date": "2025-02-05"}
+            {
+                "name": "Chicken Stir Fry",
+                "calories": 450,
+                "instructions": "1. Cut chicken\n2. Heat oil\n3. Stir fry vegetables\n4. Add sauce",
+                "ingredients": ["Chicken", "Vegetables", "Soy Sauce"]
+            },
+            {
+                "name": "Quinoa Bowl",
+                "calories": 380,
+                "instructions": "1. Cook quinoa\n2. Prepare vegetables\n3. Mix together",
+                "ingredients": ["Quinoa", "Vegetables", "Olive Oil"]
+            },
+            {
+                "name": "Greek Salad",
+                "calories": 320,
+                "instructions": "1. Chop vegetables\n2. Add feta\n3. Dress with olive oil",
+                "ingredients": ["Cucumber", "Tomatoes", "Feta"]
+            }
         ]
         
-        for recipe in recipes:
-            col1, col2, col3 = st.columns([0.5, 0.25, 0.25])
-            with col1:
-                st.write(recipe["name"])
-            with col2:
-                st.write(f"{recipe['calories']} kcal")
-            with col3:
-                st.write(recipe["date"])
+        for i, recipe in enumerate(recipes):
+            with st.expander(f"🍽️ {recipe['name']} • {recipe['calories']} kcal"):
+                st.write("**Ingredients:**")
+                for ingredient in recipe['ingredients']:
+                    st.write(f"• {ingredient}")
+                st.write("\n**Instructions:**")
+                st.write(recipe['instructions'])
         st.markdown('</div>', unsafe_allow_html=True)
-
