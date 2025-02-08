@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd  # Add this with your other imports
+from pages.profile import show_profile  
 
 st.markdown("""
 <style>
@@ -103,7 +104,8 @@ def show_dashboard():
         with col1:
             st.subheader("Your Health Goals")
         with col2:
-            st.button("Edit", key="edit_metrics", help="Edit goals", use_container_width=False)
+            if st.button("Edit", key="edit_metrics", help="Edit goals", use_container_width=False):
+                st.switch_page("pages/profile.py")
         
         # Existing metrics columns
         col1, col2 = st.columns(2)
