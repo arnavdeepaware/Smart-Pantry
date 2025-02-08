@@ -1,9 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-#Comment
 
-# Sample data
 products_data = {
     "Product": ["Milk", "Eggs", "Spinach", "Chicken Breast"],
     "Purchase Date": ["2024-01-10", "2024-02-01", "2024-02-05", "2024-01-20"],
@@ -23,15 +21,13 @@ products_data = {
     ]
 }
 
-# Convert to DataFrame
 df = pd.DataFrame(products_data)
 df["Purchase Date"] = pd.to_datetime(df["Purchase Date"])
 
-# Function to calculate days since purchase
 def calculate_days_ago(purchase_date):
     return (datetime.today() - purchase_date).days
 
-# Add "Days Ago Purchased" column
+
 df["Days Ago Purchased"] = df["Purchase Date"].apply(calculate_days_ago)
 df = df.drop(columns=["Purchase Date"])  # Remove old column
 
