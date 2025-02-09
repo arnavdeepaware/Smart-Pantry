@@ -64,7 +64,7 @@ def show_profile():
                 value=st.session_state.last_name,
                 help="Enter your last name"
             )
-            
+
             # Move email to second column for better balance
             email = st.text_input(
                 "Email 📧",
@@ -78,7 +78,7 @@ def show_profile():
 
         st.subheader("Health Goals")
         col3, col4 = st.columns(2)
-        
+
         with col3:
             current_height = st.number_input(
                 "Current Height 📏",
@@ -88,7 +88,6 @@ def show_profile():
                 step=0.01,
                 help="Your current height in centimeters"
             )
-            
             current_weight = st.number_input(
                 "Current Weight ⚖️",
                 min_value=0,
@@ -139,5 +138,3 @@ def show_profile():
             
             st.success("✅ Profile updated successfully!")
 
-if __name__ == "__profile__":
-    show_profile()
