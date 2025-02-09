@@ -1,68 +1,55 @@
 import streamlit as st
 import pandas as pd
 from backend.views import get_ingredients_from_supabase
+from comps.add_ingredient import show_add_ingredient
+import numpy as np
+from PIL import Image
+import backend.recognize as recognize  # Add this import
 
-def manual_entry_form():
-    form_col, image_col = st.columns(2)
-    
-    with form_col:
-        st.write("Add items manually")
-        item_name = st.text_input("Item Name")
-        item_quantity = st.number_input("Quantity", min_value=1)
-        item_unit = st.text_input("Unit")
+if 'sub_page' not in st.session_state:
+    st.session_state.sub_page = None
+
+# Add these session state initializations at the top after imports
+if 'add_clicked' not in st.session_state:
+    st.session_state.add_clicked = False
+if 'manual_add_clicked' not in st.session_state:
+    st.session_state.manual_add_clicked = False
+
+def show_scanner_container():
+    with st.container():
+        st.subheader("Receipt Scanner Test")
         
-        if st.button("Submit", key="submit_manual_item"):
-            if item_name and item_unit:
-                # TODO: Add Supabase integration here
-                st.success("Item Added!")
-                st.session_state.pantry_form_mode = None
-                st.rerun()
-    
-    with image_col:
-        st.markdown('<div style="padding: 20% 0;">', unsafe_allow_html=True)
-        uploaded_file = st.file_uploader(
-            "Upload an image of your item", 
-            type=['png', 'jpg', 'jpeg'],
-            help="Optional: Add an image of your ingredient"
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("Upload a receipt image", type=["png", "jpg", "jpeg"])
 
-def bill_upload_form():
-    upload_col1, upload_col2 = st.columns(2)
-    
-    with upload_col1:
-        st.write("Upload your grocery bills")
-        uploaded_file = st.file_uploader(
-            "Upload your grocery bill", 
-            type=['png', 'jpg', 'jpeg', 'pdf'],
-            help="Upload your grocery bill to automatically extract items"
-        )
-        if uploaded_file:
-            st.info("Bill processing functionality coming soon!")
-            st.image(uploaded_file, caption="Uploaded Bill", use_column_width=True)
-    
-    with upload_col2:
-        st.markdown('<div style="padding: 20% 0;">', unsafe_allow_html=True)
-        if st.button("Upload from Phone", use_container_width=True):
-            st.info("Phone upload functionality coming soon!")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-def show_add_item_form():
-    option_col1, option_col2 = st.columns(2)
-    
-    with option_col1:
-        if st.button("Add Items Manually", use_container_width=True, key="manual_add"):
-            manual_entry_form()
-            st.button("Back", key="back_manual")
+        if uploaded_file is not None:
+            image = Image.open(uploaded_file)
+            img_array = np.array(image)
             
-    with option_col2:
-        if st.button("Upload Grocery Bills", use_container_width=True, key="bill_upload"):
-            bill_upload_form()
-            st.button("Back", key="back_upload")
+            st.image(image, caption="Uploaded Receipt", use_container_width=True)
+            
+            extracted_text = recognize.extract_text(img_array)
+            st.subheader("Extracted Text")
+            st.text(extracted_text)
+            
+            food_items = recognize.extract_food_items_with_gemini(extracted_text)
+            
+            st.subheader("Extracted Food Items")
+            if isinstance(food_items, list) and food_items:
+                st.text("\n".join(food_items))
+            else:
+                st.text(food_items)
 
 def show_ingredients():
     # Fetch ingredients from Supabase
     ingredients = get_ingredients_from_supabase()
+
+    # Check if we're in a sub-page
+    if st.session_state.sub_page == "add_ingredient":
+        show_add_ingredient()
+        if st.button("Back to Ingredients"):
+            st.session_state.sub_page = None
+            st.rerun()
+        return  # Exit the function here if we're showing the add ingredient form
 
     st.title("Pantry")
 
@@ -79,18 +66,46 @@ def show_ingredients():
     """, unsafe_allow_html=True)
 
     # Create horizontal layout for buttons
-    col1, col2, col3 = st.columns([0.76, 0.12, 0.12])  # Same ratio as dashboard.py
+    col1, col2, col3, col4 = st.columns([0.64, 0.12, 0.12, 0.12])  # Adjusted ratio to accommodate new button
     with col1:
         st.subheader("Ingredients List")
     with col2:
-        add_clicked = st.button("Add", key="add_ingredient", help="Add items", use_container_width=False)
+        if st.button("Add", key="add_ingredient", help="Add items", use_container_width=False):
+            st.session_state.add_clicked = not st.session_state.add_clicked
+            st.session_state.manual_add_clicked = False  # Reset nested button state
     with col3:
         if st.button("Edit", key="edit_ingredient", help="Edit items", use_container_width=False):
             st.info("Edit functionality coming soon!")
+    test_clicked = False
+    with col4:
+        test_clicked = st.button("Test", key="test_ingredient", help="Test items", use_container_width=False)
 
-    # Show add item form if 'Add' button is clicked
-    if add_clicked:
-        show_add_item_form()
+    # Replace the add_clicked section with this:
+    if st.session_state.add_clicked:
+        option_col1, option_col2 = st.columns(2)
+        
+        with option_col1:
+            if st.button("Add Items Manually", use_container_width=True, key="manual_add"):
+                st.session_state.manual_add_clicked = not st.session_state.manual_add_clicked
+                
+        with option_col2:
+            if st.button("Upload Image", use_container_width=True, key="image_upload"):
+                show_scanner_container()
+                
+    # Show the form when manual add is clicked
+    if st.session_state.add_clicked and st.session_state.manual_add_clicked:
+        st.markdown("---")
+        show_add_ingredient()
+        
+        # Add a back button to reset the state
+        if st.button("Back to Ingredients"):
+            st.session_state.add_clicked = False
+            st.session_state.manual_add_clicked = False
+            st.rerun()
+
+    # Show scanner if Test is clicked
+    if test_clicked:
+        show_scanner_container()
 
     # If data is available, display it
     if ingredients:
