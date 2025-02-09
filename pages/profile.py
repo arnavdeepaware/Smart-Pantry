@@ -139,5 +139,5 @@ def show_profile():
             
             st.success("✅ Profile updated successfully!")
 
-if __name__ == "__profile__":
+if __name__ == "__main__":  # Changed from "__profile__" to "__main__"
     show_profile()

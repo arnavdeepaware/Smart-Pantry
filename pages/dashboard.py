@@ -1,6 +1,5 @@
 import streamlit as st
-import pandas as pd  # Add this with your other imports
-from pages.profile import show_profile  
+import pandas as pd  # Add this with your other imports  
 
 st.markdown("""
 <style>
@@ -92,108 +91,108 @@ class User:
         self.target_time = "2025-06-01"  # YYYY-MM-DD
         self.daily_calorie_target = 2000  # in calories
 
-def show_dashboard():
-    user = User("John Doe")
-    st.title("Dashboard")
-    st.write(f"Welcome, {user.name}!")
+
+user = User("John Doe")
+st.title("Dashboard")
+st.write(f"Welcome, {user.name}!")
+
+# Metrics Widget
+with st.container():
+    st.markdown('<div class="metrics-container">', unsafe_allow_html=True)
+    col1, col2 = st.columns([0.88, 0.12])  # More space for "Edit" button
+    with col1:
+        st.subheader("Your Health Goals")
+    with col2:
+        if st.button("Edit", key="edit_metrics", help="Edit goals", use_container_width=False):
+            st.switch_page("page", "Profile")
     
-    # Metrics Widget
-    with st.container():
-        st.markdown('<div class="metrics-container">', unsafe_allow_html=True)
-        col1, col2 = st.columns([0.88, 0.12])  # More space for "Edit" button
-        with col1:
-            st.subheader("Your Health Goals")
-        with col2:
-            if st.button("Edit", key="edit_metrics", help="Edit goals", use_container_width=False):
-                st.switch_page("pages/profile.py")
-        
-        # Existing metrics columns
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.metric(
-                label="Current Weight",
-                value=f"{user.current_weight} kg",
-                delta=f"{user.target_weight - user.current_weight} kg to goal"
-            )
-            st.metric(
-                label="Target Time",
-                value=user.target_time
-            )
-        
-        with col2:
-            st.metric(
-                label="Target Weight",
-                value=f"{user.target_weight} kg"
-            )
-            st.metric(
-                label="Daily Calorie Target",
-                value=f"{user.daily_calorie_target} kcal"
-            )
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Existing metrics columns
+    col1, col2 = st.columns(2)
     
-    # Modify the Pantry Quick View section
-    with st.container():
-        st.markdown('<div class="metrics-container">', unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([0.76, 0.12, 0.12])  # Equal space for "Add" and "View All"
-        with col1:
-            st.subheader("Pantry Overview")
-        with col2:
-            st.button("Add", key="add_pantry", help="Add items", use_container_width=False)
-        with col3:
-            st.button("View All", key="view_pantry", help="View all items", use_container_width=False)
-            
-        # Sample pantry data - Replace with actual data from your database
-        pantry_df = pd.DataFrame({
-            'Item': ['Eggs', 'Milk', 'Bread', 'Rice'],
-            'Quantity': [12, 1, 2, 1.5],
-            'Unit': ['pcs', 'L', 'loaf', 'kg'],
-            'Expiry': ['2025-02-15', '2025-02-12', '2025-02-10', '2025-05-01']
-        })
-        st.dataframe(
-            pantry_df,
-            hide_index=True,
-            height=150,
-            use_container_width=True
+    with col1:
+        st.metric(
+            label="Current Weight",
+            value=f"{user.current_weight} kg",
+            delta=f"{user.target_weight - user.current_weight} kg to goal"
         )
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.metric(
+            label="Target Time",
+            value=user.target_time
+        )
     
-    # Update the recipes display
-    with st.container():
-        st.markdown('<div class="metrics-container">', unsafe_allow_html=True)
-        col1, col2 = st.columns([0.88, 0.12])  # More space for "More" button
-        with col1:
-            st.subheader("My Recipes")
-        with col2:
-            st.button("More", key="view_recipes", help="View more recipes", use_container_width=False)
+    with col2:
+        st.metric(
+            label="Target Weight",
+            value=f"{user.target_weight} kg"
+        )
+        st.metric(
+            label="Daily Calorie Target",
+            value=f"{user.daily_calorie_target} kcal"
+        )
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Modify the Pantry Quick View section
+with st.container():
+    st.markdown('<div class="metrics-container">', unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([0.76, 0.12, 0.12])  # Equal space for "Add" and "View All"
+    with col1:
+        st.subheader("Pantry Overview")
+    with col2:
+        st.button("Add", key="add_pantry", help="Add items", use_container_width=False)
+    with col3:
+        st.button("View All", key="view_pantry", help="View all items", use_container_width=False)
         
-        # Sample recipes data - Remove dates from display
-        recipes = [
-            {
-                "name": "Chicken Stir Fry",
-                "calories": 450,
-                "instructions": "1. Cut chicken\n2. Heat oil\n3. Stir fry vegetables\n4. Add sauce",
-                "ingredients": ["Chicken", "Vegetables", "Soy Sauce"]
-            },
-            {
-                "name": "Quinoa Bowl",
-                "calories": 380,
-                "instructions": "1. Cook quinoa\n2. Prepare vegetables\n3. Mix together",
-                "ingredients": ["Quinoa", "Vegetables", "Olive Oil"]
-            },
-            {
-                "name": "Greek Salad",
-                "calories": 320,
-                "instructions": "1. Chop vegetables\n2. Add feta\n3. Dress with olive oil",
-                "ingredients": ["Cucumber", "Tomatoes", "Feta"]
-            }
-        ]
-        
-        for i, recipe in enumerate(recipes):
-            with st.expander(f"🍽️ {recipe['name']} • {recipe['calories']} kcal"):
-                st.write("**Ingredients:**")
-                for ingredient in recipe['ingredients']:
-                    st.write(f"• {ingredient}")
-                st.write("\n**Instructions:**")
-                st.write(recipe['instructions'])
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Sample pantry data - Replace with actual data from your database
+    pantry_df = pd.DataFrame({
+        'Item': ['Eggs', 'Milk', 'Bread', 'Rice'],
+        'Quantity': [12, 1, 2, 1.5],
+        'Unit': ['pcs', 'L', 'loaf', 'kg'],
+        'Expiry': ['2025-02-15', '2025-02-12', '2025-02-10', '2025-05-01']
+    })
+    st.dataframe(
+        pantry_df,
+        hide_index=True,
+        height=150,
+        use_container_width=True
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Update the recipes display
+with st.container():
+    st.markdown('<div class="metrics-container">', unsafe_allow_html=True)
+    col1, col2 = st.columns([0.88, 0.12])  # More space for "More" button
+    with col1:
+        st.subheader("My Recipes")
+    with col2:
+        st.button("More", key="view_recipes", help="View more recipes", use_container_width=False)
+    
+    # Sample recipes data - Remove dates from display
+    recipes = [
+        {
+            "name": "Chicken Stir Fry",
+            "calories": 450,
+            "instructions": "1. Cut chicken\n2. Heat oil\n3. Stir fry vegetables\n4. Add sauce",
+            "ingredients": ["Chicken", "Vegetables", "Soy Sauce"]
+        },
+        {
+            "name": "Quinoa Bowl",
+            "calories": 380,
+            "instructions": "1. Cook quinoa\n2. Prepare vegetables\n3. Mix together",
+            "ingredients": ["Quinoa", "Vegetables", "Olive Oil"]
+        },
+        {
+            "name": "Greek Salad",
+            "calories": 320,
+            "instructions": "1. Chop vegetables\n2. Add feta\n3. Dress with olive oil",
+            "ingredients": ["Cucumber", "Tomatoes", "Feta"]
+        }
+    ]
+    
+    for i, recipe in enumerate(recipes):
+        with st.expander(f"🍽️ {recipe['name']} • {recipe['calories']} kcal"):
+            st.write("**Ingredients:**")
+            for ingredient in recipe['ingredients']:
+                st.write(f"• {ingredient}")
+            st.write("\n**Instructions:**")
+            st.write(recipe['instructions'])
+    st.markdown('</div>', unsafe_allow_html=True)
