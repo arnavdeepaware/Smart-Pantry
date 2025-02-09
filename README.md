@@ -23,7 +23,6 @@ This staggering waste happens while many struggle to maintain a healthy diet and
 - 🗑️❌ **Reduce Food Waste**: By encouraging the use of ingredients before they expire.
 - 🥦 **Support Health Goals**: Personalized meal suggestions based on dietary needs and available pantry items.
 - ⏰💸 **Save Time & Money**: Maximize pantry usage and minimize trips to the store.
-- 🏪 **Nearby Store Suggestions**: Need an ingredient? We’ll help you find it nearby!
 
 Together, we can create a world where sustainability and nutrition are effortless, all while **reducing food waste** and ensuring that **no food goes to waste**! 🌍🍽️
 
@@ -43,9 +42,6 @@ Together, we can create a world where sustainability and nutrition are effortles
 - **Health & Fitness Integration**:
   - Set your current weight, target weight, and time frame 📉
   - Get meal suggestions that fit your diet plan 🥗
-
-- **Smart Shopping**:
-  - Missing an ingredient? We suggest nearby stores to buy what you need 🛒
 ---
 
 ### 🎉 **Authors:**
