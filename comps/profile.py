@@ -2,7 +2,11 @@ import streamlit as st
 from datetime import datetime
 
 def show_profile():
+    
     st.title("👤 Profile")
+
+    
+
     st.write("<div style='text-align: left;'>Update your personal information and health goals below.</div>", unsafe_allow_html=True)
     st.markdown("""
     <style>
