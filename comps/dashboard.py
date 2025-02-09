@@ -16,7 +16,7 @@ def show_dashboard():
 
     user = User("John Doe")
     st.title("Dashboard")
-    st.write(f"Welcome, {user.name}!")
+    st.markdown(f"<div style='text-align: left;'>Welcome, {user.name}!</div>", unsafe_allow_html=True)
 
 
     st.markdown("""

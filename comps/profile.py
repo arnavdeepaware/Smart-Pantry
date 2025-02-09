@@ -3,6 +3,7 @@ from datetime import datetime
 
 def show_profile():
     st.title("👤 Profile")
+    st.write("<div style='text-align: left;'>Update your personal information and health goals below.</div>", unsafe_allow_html=True)
     st.markdown("""
     <style>
         .stForm {
@@ -17,6 +18,18 @@ def show_profile():
             margin: 20px 0;
             border: none;
             border-top: 1px solid #ddd;
+        }
+        /* Center the submit button container */
+        div.stButton {
+            text-align: center;
+            width: 100%;
+        }
+        /* Style the submit button itself */
+        div.stButton > button {
+            width: auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            margin: 0 auto;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -122,9 +135,7 @@ def show_profile():
             )
         
         # Center the submit button
-        _, col_submit, _ = st.columns([1, 2, 1])
-        with col_submit:
-            submit_button = st.form_submit_button("💾 Save Changes")
+        submit_button = st.form_submit_button("💾 Save Changes")
         
         if submit_button:
             # Update session state with new values
