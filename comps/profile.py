@@ -63,7 +63,7 @@ def show_profile():
                 value=st.session_state.first_name,
                 help="Enter your first name"
             )
-            
+
             username = st.text_input(
                 "Username 📝",
                 value=st.session_state.username,
@@ -98,13 +98,12 @@ def show_profile():
                 min_value=0.0,
                 max_value=300.0,
                 value=float(st.session_state.current_height),
-                step=0.01,
                 help="Your current height in centimeters"
             )
             current_weight = st.number_input(
                 "Current Weight ⚖️",
-                min_value=0,
-                max_value=500,
+                min_value=0.0,
+                max_value=500.0,
                 value=int(st.session_state.current_weight),
                 help="Your current weight in kilograms"
             )
@@ -123,20 +122,19 @@ def show_profile():
                 min_value=0.0,
                 max_value=500.0,
                 value=float(st.session_state.target_weight),
-                step=0.1,
                 help="Your goal weight in kilograms"
             )
-            
+
             time_to_target = st.selectbox(
                 "Time to Target ⏱️",
                 options=['1 month', '3 months', '6 months', '12 months'],
                 index=['1 month', '3 months', '6 months', '12 months'].index(st.session_state.time_to_target),
                 help="Select your target timeframe"
             )
-        
+
         # Center the submit button
         submit_button = st.form_submit_button("💾 Save Changes")
-        
+
         if submit_button:
             # Update session state with new values
             st.session_state.first_name = first_name
@@ -146,6 +144,5 @@ def show_profile():
             st.session_state.current_weight = current_weight
             st.session_state.target_weight = target_weight
             st.session_state.time_to_target = time_to_target
-            
             st.success("✅ Profile updated successfully!")
 
