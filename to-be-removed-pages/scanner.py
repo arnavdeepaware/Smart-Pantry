@@ -1,7 +1,11 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import streamlit as st
 import numpy as np
 from PIL import Image
-import backend.recognize as recognize
+from backend.recognize import extract_food_items_with_gemini, extract_text
 
 st.title("Receipt Scanner")
 
@@ -13,11 +17,11 @@ if uploaded_file is not None:
     
     st.image(image, caption="Uploaded Receipt", use_container_width=True)
     
-    extracted_text = recognize.extract_text(img_array)
+    extracted_text = extract_text(img_array)
     st.subheader("Extracted Text")
     st.text(extracted_text)
     
-    food_items = recognize.extract_food_items_with_gemini(extracted_text)
+    food_items = extract_food_items_with_gemini(extracted_text)
 
     
     st.subheader("Extracted Food Items")
