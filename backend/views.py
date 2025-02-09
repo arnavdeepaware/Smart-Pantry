@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from supabase import create_client
 import streamlit as st
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import google.generativeai as genai
 
 load_dotenv()
@@ -41,6 +41,35 @@ def get_recipe():
         return jsonify({"error": "No ingredients found in pantry."}), 400
     recipe = generate_recipe(ingredients)
     return jsonify({"recipe": recipe})
+
+@app.route('/user-receipts/<int:user_id>', methods=['GET'])
+def get_user_receipts(user_id):
+    receipts = supabase.table('receipts').select('*').eq('user_id', user_id).execute()
+    return jsonify(receipts.data)
+
+@app.route('/receipt-items/<int:receipt_id>', methods=['GET'])
+def get_receiptItems(receipt_id):
+    items = supabase.table('receipt_items').select('*').eq('receipt_id', receipt_id).execute()
+    return jsonify(items.data)
+
+# def ingredientsToDB(food_items):
+#     for item in food_items:
+#         data = {
+#             "item_name": item,
+#             "quantity": 1,
+#             "unit": "",
+#             "days_in_pantry": 7
+#         }
+#         print(f"Inserting item: {item}")
+#         try:
+#             response = supabase.table('pantry').insert(data).execute()
+#             print(f"Insert response: {response}")
+#             if response.status_code != 201:
+#                 print(f"Failed to insert item: {response.content}")
+#             else:
+#                 print(f"Inserted {item} into pantry successfully!")
+#         except Exception as e:
+#             print(f"Error inserting {item}: {e}")
 
 if __name__ == "__main__":
     app.run(debug=True)

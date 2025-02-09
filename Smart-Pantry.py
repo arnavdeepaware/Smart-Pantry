@@ -5,6 +5,17 @@ from comps.dashboard import show_dashboard
 from comps.profile import show_profile
 from comps.ingredients import show_ingredients
 from comps.recipes import show_recipes_board
+from supabase import create_client
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+url = os.getenv("SUPABASE_URL")
+key = os.getenv("SUPABASE_KEY")
+
+supabase = create_client(url, key)
 
 # Page configuration
 st.set_page_config(
@@ -178,39 +189,57 @@ def show_signup():
     with st.container():
         st.markdown("<div style='margin-top: 15vh;'></div>", unsafe_allow_html=True)
         st.markdown("<h1 class='title' style='text-align: center;'>Create Smart Pantry Account</h1>", unsafe_allow_html=True)
-        
         col1, col2, col3 = st.columns([1,2,1])
+
         with col2:
             first_name = st.text_input("First Name", key="signup_firstname")
             last_name = st.text_input("Last Name", key="signup_lastname")
             email = st.text_input("Email Address", key="signup_email")
             new_username = st.text_input("Choose Username", key="signup_username")
             new_password = st.text_input("Choose Password", type="password", key="signup_password")
-            confirm_password = st.text_input("Confirm Password", type="password", key="signup_confirm")
-            
+            confirm_password = st.text_input("Confirm Password", type="password", key="signup_confirm_password")
             if st.button("Sign Up", use_container_width=True, key="signup_button"):
                 st.session_state.signup_submitted = True
-                # Basic validation for all fields
                 if all([first_name, last_name, email, new_username, new_password, confirm_password]):
                     if new_password == confirm_password:
-                        # Basic email validation
                         if "@" in email and "." in email:
-                            # Add your signup logic here
-                            st.session_state.logged_in = True
-                            st.session_state.current_user = new_username
-                            st.session_state.active_page = 'Home'
-                            st.success("Account created successfully!")
-                            st.rerun()  # Changed from st.experimental_rerun()
+                            response = supabase.auth.sign_up({
+                                "email": email,
+                                "password": new_password
+                            })
+                            if response.user:
+                                user_id = response.user.id
+
+                                user_data = {
+                                    "auth_id": user_id,
+                                    "first_name": first_name,
+                                    "last_name": last_name,
+                                    "username": new_username,
+                                    "email": email
+                                }
+
+                                insert_result = supabase.table("users").insert(user_data).execute()
+
+                                if insert_result.status_code == 201:
+                                    st.session_state.logged_in = True
+                                    st.session_state.current_user = new_username
+                                    st.session_state.active_page = 'Home'
+                                    st.success("Account created successfully! Please check your email for confirmation.")
+                                    st.rerun()
+                                else:
+                                    st.error(f"Error inserting user data: {insert_result.error_message}")
+                            else:
+                                st.error(f"Error: {response.error.message if response.error else 'Unknown error'}")
                         else:
                             st.error("Please enter a valid email address")
                     else:
                         st.error("Passwords don't match!")
                 else:
                     st.error("Please fill in all fields")
-            
             if st.button("Back to Home", use_container_width=True, key="signup_back"):
                 st.session_state.signup_submitted = False
                 st.session_state.page = 'landing'
+
 
 # Add this new function for the sidebar navigation
 def show_sidebar():
