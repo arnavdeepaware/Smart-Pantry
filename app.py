@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 from pages.dashboard import show_dashboard
 from pages.ingredients import show_ingredients
+from pages.scanner import show_scanner
 
 products_data = {
     "Product": ["Milk", "Eggs", "Spinach", "Chicken Breast"],
@@ -91,7 +92,7 @@ def profile_page():
 
 def main():
     st.sidebar.title("Smart Pantry")
-    options = ["Sign Up", "Sign In", "My Pantry Dashboard", "Profile Page", "Dashboard", "Ingredients"]
+    options = ["Sign Up", "Sign In", "My Pantry Dashboard", "Profile Page", "Dashboard", "Ingredients", "Scanner"]
     choice = st.sidebar.radio("Select a Page", options)
 
     if choice == "Sign Up":
@@ -106,6 +107,8 @@ def main():
         show_dashboard()
     elif choice == "Ingredients":
         show_ingredients()
+    elif choice == "Scanner":
+        show_scanner()
 
 if __name__ == "__main__":
     main()
