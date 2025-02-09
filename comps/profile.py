@@ -1,12 +1,19 @@
 import streamlit as st
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+from supabase import create_client
+
+load_dotenv()
+
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def show_profile():
     
     st.title("👤 Profile")
-
-    
-
     st.write("<div style='text-align: left;'>Update your personal information and health goals below.</div>", unsafe_allow_html=True)
     st.markdown("""
     <style>
@@ -108,7 +115,7 @@ def show_profile():
                 "Current Weight ⚖️",
                 min_value=0.0,
                 max_value=500.0,
-                value=int(st.session_state.current_weight),
+                value=float(st.session_state.current_weight),
                 help="Your current weight in kilograms"
             )
 
