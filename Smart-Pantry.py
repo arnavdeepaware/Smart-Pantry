@@ -1,6 +1,8 @@
 import streamlit as st
 import sqlite3
 from datetime import datetime
+from comps.dashboard import show_dashboard
+from comps.profile import show_profile
 
 # Page configuration
 st.set_page_config(
@@ -160,7 +162,7 @@ def show_login():
                     st.session_state.current_user = username
                     st.session_state.active_page = 'Home'
                     st.success("Successfully logged in!")
-                    st.experimental_rerun()
+                    st.rerun()  # Changed from st.experimental_rerun()
                 else:
                     st.error("Please enter both username and password")
             
@@ -194,7 +196,7 @@ def show_signup():
                             st.session_state.current_user = new_username
                             st.session_state.active_page = 'Home'
                             st.success("Account created successfully!")
-                            st.experimental_rerun()
+                            st.rerun()  # Changed from st.experimental_rerun()
                         else:
                             st.error("Please enter a valid email address")
                     else:
@@ -215,7 +217,7 @@ def show_sidebar():
         # Navigation options
         st.session_state.active_page = st.radio(
             "Navigation",
-            ["Home", "My Pantry", "Shopping List", "Recipe Suggestions", "Analytics", "Settings"],
+            ["Home", "My Profile", "Shopping List", "Recipe Suggestions", "Analytics", "Settings"],  # "My Profile" matches the condition
             key="nav"
         )
         
@@ -224,7 +226,7 @@ def show_sidebar():
             st.session_state.logged_in = False
             st.session_state.current_user = None
             st.session_state.page = 'landing'
-            st.experimental_rerun()
+            st.rerun()  # Changed from st.experimental_rerun()
 
 # Add this new function to handle the logged-in state pages
 def show_logged_in_page():
@@ -232,12 +234,10 @@ def show_logged_in_page():
     
     # Handle different pages based on navigation selection
     if st.session_state.active_page == "Home":
-        st.title("Home Dashboard")
-        # Add your home dashboard content
+        show_dashboard()
         
-    elif st.session_state.active_page == "My Pantry":
-        st.title("My Pantry")
-        # Add your pantry management content
+    elif st.session_state.active_page == "My Profile":  # Match the radio button text
+        show_profile()
         
     elif st.session_state.active_page == "Shopping List":
         st.title("Shopping List")
