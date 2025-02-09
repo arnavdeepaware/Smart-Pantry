@@ -127,7 +127,7 @@ def show_landing():
         # Create three promotional columns
         promo1, promo2, promo3 = st.columns(3)
 
-        with promo1:
+    with promo1:
         st.markdown("### 🔍 Smart Pantry Tracking")
         st.write("""
             Keep track of your pantry ingredients effortlessly.
