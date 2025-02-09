@@ -3,6 +3,7 @@ import sqlite3
 from datetime import datetime
 from comps.dashboard import show_dashboard
 from comps.profile import show_profile
+from comps.ingredients import show_ingredients
 
 # Page configuration
 st.set_page_config(
@@ -217,7 +218,7 @@ def show_sidebar():
         # Navigation options
         st.session_state.active_page = st.radio(
             "Navigation",
-            ["Home", "My Profile", "Shopping List", "Recipe Suggestions", "Analytics", "Settings"],  # "My Profile" matches the condition
+            ["Home", "My Profile", "Pantry", "Recipe Suggestions", "Analytics", "Settings"],  # "My Profile" matches the condition
             key="nav"
         )
         
@@ -239,9 +240,8 @@ def show_logged_in_page():
     elif st.session_state.active_page == "My Profile":  # Match the radio button text
         show_profile()
         
-    elif st.session_state.active_page == "Shopping List":
-        st.title("Shopping List")
-        # Add your shopping list content
+    elif st.session_state.active_page == "Pantry":
+        show_ingredients()
         
     elif st.session_state.active_page == "Recipe Suggestions":
         st.title("Recipe Suggestions")
