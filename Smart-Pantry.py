@@ -105,7 +105,7 @@ if 'logged_in' not in st.session_state:
 if 'current_user' not in st.session_state:
     st.session_state.current_user = None
 if 'active_page' not in st.session_state:
-    st.session_state.active_page = 'Home'
+    st.session_state.active_page = 'My Profile'
 if 'sub_page' not in st.session_state:
     st.session_state.sub_page = None
 
@@ -178,7 +178,7 @@ def show_login():
                         if response.user:
                             st.session_state.logged_in = True
                             st.session_state.current_user = email
-                            st.session_state.active_page = 'Profile'
+                            st.session_state.active_page = "My Profile"
                             st.success("Successfully logged in!")
                             st.rerun()
                         else:
@@ -227,7 +227,7 @@ def show_signup():
                                 if insert_result.data:
                                     st.session_state.logged_in = True
                                     st.session_state.current_user = new_username
-                                    st.session_state.page = 'profile'
+                                    st.session_state.page = "My Profile"
                                     st.rerun()
                                 else:
                                     st.error("Failed to create account. Please try again.")
@@ -268,7 +268,7 @@ def show_logged_in_page():
     # Handle different pages based on navigation selection
     if st.session_state.active_page == "Home":
         show_dashboard()
-    elif st.session_state.active_page == "My Profile":  # Match the radio button text
+    elif st.session_state.active_page == "My Profile":
         show_profile()
     elif st.session_state.active_page == "Pantry":
         show_ingredients()
@@ -287,8 +287,6 @@ def main():
             show_signup()
         elif st.session_state.page == 'login':
             show_login()
-        elif st.session_state.page == 'profile':
-            show_profile()
 
 if __name__ == "__main__":
     main()
