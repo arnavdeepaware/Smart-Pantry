@@ -114,8 +114,7 @@ def show_landing():
     with st.container():
         st.markdown("<div style='margin-top: 15vh;'></div>", unsafe_allow_html=True)
         st.markdown("<h1 class='title' style='text-align: center;'>Welcome to Smart Pantry!!</h1>", unsafe_allow_html=True)
-        st.markdown("<p class='subtitle' style='text-align: center;'>Your digital solution for smart kitchen management</p>", unsafe_allow_html=True)
-        
+        st.markdown("<p class='subtitle' style='text-align: center;'>Your Digital Solution for Smart Kitchen Management</p>", unsafe_allow_html=True)
         # Create three columns to center the buttons
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
@@ -123,13 +122,11 @@ def show_landing():
                 st.session_state.page = 'login'
             if st.button("Sign Up", use_container_width=True):
                 st.session_state.page = 'signup'
-        
         # Add spacing between buttons and promotional content
         st.markdown("<div style='margin-top: 5vh;'></div>", unsafe_allow_html=True)
-        
         # Create three promotional columns
         promo1, promo2, promo3 = st.columns(3)
-        
+
         with promo1:
             st.markdown("### 🔍 Smart Inventory")
             st.write("""
@@ -139,7 +136,7 @@ def show_landing():
                 - Low stock alerts
                 - Shopping suggestions
             """)
-        
+
         with promo2:
             st.markdown("### 📊 Usage Analytics")
             st.write("""
@@ -149,7 +146,7 @@ def show_landing():
                 - Cost analysis
                 - Waste reduction tips
             """)
-            
+
         with promo3:
             st.markdown("### 🌟 Smart Features")
             st.write("""
@@ -164,14 +161,14 @@ def show_login():
     with st.container():
         st.markdown("<div style='margin-top: 15vh;'></div>", unsafe_allow_html=True)
         st.markdown("<h1 class='title' style='text-align: center;'>Login to Smart Pantry</h1>", unsafe_allow_html=True)
-                
+
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
             username = st.text_input("Username", key="login_username")
             password = st.text_input("Password", type="password", key="login_password")
-                
+
             if st.button("Login", use_container_width=True, key="login_button"):
-                if username and password:  # Basic validation
+                if username and password:
                     # Add your login validation logic here
                     st.session_state.logged_in = True
                     st.session_state.current_user = username
@@ -180,7 +177,7 @@ def show_login():
                     st.rerun()  # Changed from st.experimental_rerun()
                 else:
                     st.error("Please enter both username and password")
-            
+
             if st.button("Back to Home", use_container_width=True, key="login_back"):
                 st.session_state.login_submitted = False
                 st.session_state.page = 'landing'
@@ -192,15 +189,13 @@ def show_signup():
         col1, col2, col3 = st.columns([1,2,1])
 
         with col2:
-            first_name = st.text_input("First Name", key="signup_firstname")
-            last_name = st.text_input("Last Name", key="signup_lastname")
             email = st.text_input("Email Address", key="signup_email")
             new_username = st.text_input("Choose Username", key="signup_username")
             new_password = st.text_input("Choose Password", type="password", key="signup_password")
             confirm_password = st.text_input("Confirm Password", type="password", key="signup_confirm_password")
             if st.button("Sign Up", use_container_width=True, key="signup_button"):
                 st.session_state.signup_submitted = True
-                if all([first_name, last_name, email, new_username, new_password, confirm_password]):
+                if all([email, new_username, new_password, confirm_password]):
                     if new_password == confirm_password:
                         if "@" in email and "." in email:
                             response = supabase.auth.sign_up({
@@ -212,8 +207,7 @@ def show_signup():
 
                                 user_data = {
                                     "auth_id": user_id,
-                                    "first_name": first_name,
-                                    "last_name": last_name,
+
                                     "username": new_username,
                                     "email": email
                                 }
@@ -223,13 +217,8 @@ def show_signup():
                                 if insert_result.status_code == 201:
                                     st.session_state.logged_in = True
                                     st.session_state.current_user = new_username
-                                    st.session_state.active_page = 'Home'
-                                    st.success("Account created successfully! Please check your email for confirmation.")
-                                    st.rerun()
-                                else:
-                                    st.error(f"Error inserting user data: {insert_result.error_message}")
-                            else:
-                                st.error(f"Error: {response.error.message if response.error else 'Unknown error'}")
+                                    st.session_state.page = 'profile'
+                                    st.experimental_rerun()
                         else:
                             st.error("Please enter a valid email address")
                     else:
@@ -246,14 +235,12 @@ def show_sidebar():
     with st.sidebar:
         st.title(f"Welcome, {st.session_state.current_user}")
         st.markdown("---")
-        
         # Navigation options
         st.session_state.active_page = st.radio(
             "Navigation",
             ["Home", "My Profile", "Pantry", "Recipes"],  # "My Profile" matches the condition
             key="nav"
         )
-        
         st.markdown("---")
         if st.button("Logout"):
             st.session_state.logged_in = False
@@ -264,17 +251,13 @@ def show_sidebar():
 # Add this new function to handle the logged-in state pages
 def show_logged_in_page():
     show_sidebar()
-    
     # Handle different pages based on navigation selection
     if st.session_state.active_page == "Home":
         show_dashboard()
-        
     elif st.session_state.active_page == "My Profile":  # Match the radio button text
         show_profile()
-        
     elif st.session_state.active_page == "Pantry":
         show_ingredients()
-        
     elif st.session_state.active_page == "Recipes":
         show_recipes_board()
 
@@ -290,6 +273,8 @@ def main():
             show_signup()
         elif st.session_state.page == 'login':
             show_login()
+        elif st.session_state.page == 'profile':
+            show_profile()
 
 if __name__ == "__main__":
     main()
