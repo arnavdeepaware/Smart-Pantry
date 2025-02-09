@@ -4,6 +4,7 @@ from datetime import datetime
 from comps.dashboard import show_dashboard
 from comps.profile import show_profile
 from comps.ingredients import show_ingredients
+from comps.recipes import show_recipes_board
 
 # Page configuration
 st.set_page_config(
@@ -218,7 +219,7 @@ def show_sidebar():
         # Navigation options
         st.session_state.active_page = st.radio(
             "Navigation",
-            ["Home", "My Profile", "Pantry", "Recipe Suggestions", "Analytics", "Settings"],  # "My Profile" matches the condition
+            ["Home", "My Profile", "Pantry", "Recipes"],  # "My Profile" matches the condition
             key="nav"
         )
         
@@ -243,17 +244,9 @@ def show_logged_in_page():
     elif st.session_state.active_page == "Pantry":
         show_ingredients()
         
-    elif st.session_state.active_page == "Recipe Suggestions":
-        st.title("Recipe Suggestions")
-        # Add your recipe content
-        
-    elif st.session_state.active_page == "Analytics":
-        st.title("Analytics")
-        # Add your analytics content
-        
-    elif st.session_state.active_page == "Settings":
-        st.title("Settings")
-        # Add your settings content
+    elif st.session_state.active_page == "Recipes":
+        show_recipes_board()
+
 
 # Main app logic
 def main():
