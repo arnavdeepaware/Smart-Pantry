@@ -1,9 +1,23 @@
 import requests
+import os
+from dotenv import load_dotenv
+from supabase import create_client
+
+load_dotenv()
+
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 def get_user_info(user_id):
     """Fetch user information from the API"""
     try:
         response = requests.get(f'http://127.0.0.1:5000/user/{user_id}')
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Response Content: {response.content}")
+
         if response.status_code == 200:
             # Get the first user from the list
             user_json = response.json()[0] if response.json() else None
@@ -26,10 +40,10 @@ def get_user_info(user_id):
                 return user_data
             return None
         else:
+            print(f"Error: Received status code {response.status_code}")
             return None
     except requests.exceptions.RequestException as e:
         print(f"Error fetching user data: {e}")
         return None
 
-
-
+print(get_user_info('197824dc-2cd7-4431-8a64-918f9ab8a18e'))

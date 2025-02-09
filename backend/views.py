@@ -52,9 +52,9 @@ app = Flask(__name__)
 '''
 
 #Get All user information
-@app.route('/user/<int:user_id>', methods=['GET'])
+@app.route('/user/<uuid:user_id>', methods=['GET'])
 def get_user(user_id):
-    user = supabase.table('users').select('*').eq('id', user_id).execute()
+    user = supabase.table('users').select('*').eq('auth_id', user_id).execute()
     return jsonify(user.data)
 
 
@@ -76,6 +76,11 @@ def get_receiptItems(receipt_id):
     items = supabase.table('receipt_items').select('*').eq('receipt_id', receipt_id).execute()
     return jsonify(items.data)
 
+def get_user_id():
+    user_id = supabase.table('users').select('*').eq('email', email).execute()
+    print(user_id)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
-    print(get_user_info(26)) 
+
