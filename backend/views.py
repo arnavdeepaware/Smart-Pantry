@@ -34,9 +34,6 @@ def generate_recipe(ingredients):
     except Exception as e:
         return f"Error generating recipe: {str(e)}"
 
-# Example to test recipe generation (you can remove this later)
-print(generate_recipe([{"item_name": "milk", "quantity": 1, "unit": "cup", "days_in_pantry": 5}]))
-
 @app.route('/get-recipe', methods=['GET'])
 def get_recipe():
     ingredients = get_ingredients_from_supabase()
