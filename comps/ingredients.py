@@ -5,39 +5,31 @@ from comps.add_ingredient import show_add_ingredient
 import numpy as np
 from PIL import Image
 import backend.recognize as recognize  # Add this import
+from comps.scanner import img_to_food_items
 
 if 'sub_page' not in st.session_state:
     st.session_state.sub_page = None
-
-# Add these session state initializations at the top after imports
 if 'add_clicked' not in st.session_state:
     st.session_state.add_clicked = False
 if 'manual_add_clicked' not in st.session_state:
     st.session_state.manual_add_clicked = False
+if 'upload_window_open' not in st.session_state:
+    st.session_state.upload_window_open = False
 
+# Modify the show_scanner_container function
 def show_scanner_container():
     with st.container():
-        st.subheader("Receipt Scanner Test")
+        st.subheader("Receipt Scanner")
         
         uploaded_file = st.file_uploader("Upload a receipt image", type=["png", "jpg", "jpeg"])
+        if uploaded_file:
+            # Process the image
+            with st.spinner('Processing receipt...'):
+                food_items = img_to_food_items(uploaded_file)
+                if food_items:
+                    st.success('Receipt processed successfully! 🎉')
+                    return food_items
 
-        if uploaded_file is not None:
-            image = Image.open(uploaded_file)
-            img_array = np.array(image)
-            
-            st.image(image, caption="Uploaded Receipt", use_container_width=True)
-            
-            extracted_text = recognize.extract_text(img_array)
-            st.subheader("Extracted Text")
-            st.text(extracted_text)
-            
-            food_items = recognize.extract_food_items_with_gemini(extracted_text)
-            
-            st.subheader("Extracted Food Items")
-            if isinstance(food_items, list) and food_items:
-                st.text("\n".join(food_items))
-            else:
-                st.text(food_items)
 
 def show_ingredients():
     # Add this at the beginning of your show_ingredients function or at the top of the file
@@ -70,31 +62,36 @@ def show_ingredients():
     """, unsafe_allow_html=True)
 
     # Create horizontal layout for buttons
-    col1, col2, col3, col4 = st.columns([0.64, 0.12, 0.12, 0.12])  # Adjusted ratio to accommodate new button
+    col1, col2, col3 = st.columns([0.76, 0.12, 0.12])  # Adjusted ratio for two buttons
     with col1:
         st.subheader("Ingredients List")
     with col2:
         if st.button("Add", key="add_ingredient", help="Add items", use_container_width=False):
             st.session_state.add_clicked = not st.session_state.add_clicked
-            st.session_state.manual_add_clicked = False  # Reset nested button state
     with col3:
         if st.button("Edit", key="edit_ingredient", help="Edit items", use_container_width=False):
             st.info("Edit functionality coming soon!")
-    test_clicked = False
-    with col4:
-        test_clicked = st.button("Test", key="test_ingredient", help="Test items", use_container_width=False)
 
-    # Replace the add_clicked section with this:
+    # Add clicked section remains the same
     if st.session_state.add_clicked:
         option_col1, option_col2 = st.columns(2)
         
         with option_col1:
             if st.button("Add Items Manually", use_container_width=True, key="manual_add"):
-                st.session_state.manual_add_clicked = not st.session_state.manual_add_clicked
+                st.session_state.manual_add_clicked = True
+                st.session_state.upload_window_open = False
                 
         with option_col2:
             if st.button("Upload Image", use_container_width=True, key="image_upload"):
-                show_scanner_container()
+                st.session_state.upload_window_open = True
+                st.session_state.manual_add_clicked = False
+        
+        # Show scanner if upload window is open
+        if st.session_state.upload_window_open:
+            food_items = show_scanner_container()
+            if st.button("Close Upload Window", key="close_upload"):
+                st.session_state.upload_window_open = False
+                st.rerun()
                 
     # Show the form when manual add is clicked
     if st.session_state.add_clicked and st.session_state.manual_add_clicked:
@@ -106,10 +103,6 @@ def show_ingredients():
             st.session_state.add_clicked = False
             st.session_state.manual_add_clicked = False
             st.rerun()
-
-    # Show scanner if Test is clicked
-    if test_clicked:
-        show_scanner_container()
 
     # If data is available, display it
     if ingredients:
@@ -132,6 +125,7 @@ def show_ingredients():
         st.table(df)
     else:
         st.write("No ingredients found.")
+
 
     # Styling
     st.markdown(
