@@ -164,23 +164,33 @@ def show_login():
 
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
-            username = st.text_input("Username", key="login_username")
+            email = st.text_input("Email Address", key="login_email")
             password = st.text_input("Password", type="password", key="login_password")
 
             if st.button("Login", use_container_width=True, key="login_button"):
-                if username and password:
-                    # Add your login validation logic here
-                    st.session_state.logged_in = True
-                    st.session_state.current_user = username
-                    st.session_state.active_page = 'Home'
-                    st.success("Successfully logged in!")
-                    st.rerun()  # Changed from st.experimental_rerun()
+                if email and password:
+                    try:
+                        response = supabase.auth.sign_in_with_password({
+                            "email": email,
+                            "password": password
+                        })
+
+                        if response.user:
+                            st.session_state.logged_in = True
+                            st.session_state.current_user = email
+                            st.session_state.active_page = 'Profile'
+                            st.success("Successfully logged in!")
+                            st.rerun()
+                        else:
+                            st.error("Invalid credentials, please try again.")
+                    except Exception as e:
+                        st.error(f"An error occurred: {str(e)}")
                 else:
-                    st.error("Please enter both username and password")
+                    st.error("Please enter both email and password")
 
             if st.button("Back to Home", use_container_width=True, key="login_back"):
-                st.session_state.login_submitted = False
                 st.session_state.page = 'landing'
+
 
 def show_signup():
     with st.container():
