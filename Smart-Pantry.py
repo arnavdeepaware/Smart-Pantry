@@ -252,7 +252,12 @@ def show_signup():
 # Add this new function for the sidebar navigation
 def show_sidebar():
     with st.sidebar:
-        st.title(f"Welcome, {st.session_state.current_user}")
+        # Get user details from the users table
+        user = supabase.table("users").select("username").eq("auth_id", st.session_state.user_id).execute()
+        if user and user.data:
+            st.title(f"Welcome, {user.data[0]['username']}")
+        else:
+            st.title("Welcome!")
         st.markdown("---")
         # Navigation options
         st.session_state.active_page = st.radio(

@@ -46,4 +46,18 @@ def get_user_info(user_id):
         print(f"Error fetching user data: {e}")
         return None
 
-print(get_user_info('197824dc-2cd7-4431-8a64-918f9ab8a18e'))
+def update_user_info(user_id, data):
+    """Update user information using the API"""
+    try:
+        response = requests.put(f'http://127.0.0.1:5000/user/update/{user_id}', json=data)
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Response Content: {response.content}")
+
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Error: Received status code {response.status_code}")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error updating user data: {e}")
+        return None

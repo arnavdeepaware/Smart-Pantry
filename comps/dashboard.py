@@ -1,6 +1,16 @@
 import streamlit as st
 import pandas as pd  # Add this with your other imports  
+import os
+from dotenv import load_dotenv
+from supabase import create_client
+from backend.test import get_user_info, update_user_info
 
+load_dotenv()
+
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 #Sample Data
 class User:
@@ -14,7 +24,37 @@ class User:
 
 def show_dashboard():
 
-    user = User("John Doe")
+    # Initialize session state with default values
+    default_values = {
+        'first_name': "",
+        'last_name': "",
+        'username': "",
+        'email': "",
+        'current_weight': 0.0,
+        'target_weight': 0.0,
+        'current_height': 0.0,
+        'time_to_target': "3 months",
+        'daily_calories': 2200,
+        'age': 25,
+        'dietary_preference': 'Vegetarian',
+        'sex': 'Male'
+    }
+
+    # Initialize session state if values don't exist
+    for key, value in default_values.items():
+        if key not in st.session_state:
+            st.session_state[key] = value
+
+    user_id = st.session_state.user_id
+    user_data = get_user_info(user_id)
+
+    user = User(f"{user_data['first_name']} {user_data['last_name']}")
+    user.current_weight = user_data['current_weight']
+    user.target_weight = user_data['target_weight']
+    user.target_time = user_data['time_to_target']
+    user.daily_calorie_target = user_data.get('calories', 2200)
+
+
     st.title("Dashboard")
     st.markdown(f"<div style='text-align: left;'>Welcome, {user.name}!</div>", unsafe_allow_html=True)
 

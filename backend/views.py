@@ -57,6 +57,38 @@ def get_user(user_id):
     user = supabase.table('users').select('*').eq('auth_id', user_id).execute()
     return jsonify(user.data)
 
+@app.route('/user/update/<uuid:user_id>', methods=['PUT'])
+def update_user(user_id):
+    data = request.json
+    # Fetch current user data
+    current_user = supabase.table('users').select('*').eq('auth_id', user_id).execute()
+    
+    if not current_user.data:
+        return jsonify({"error": "User not found"}), 404
+
+    current_user_data = current_user.data[0]
+
+    # Update only the fields provided in the input
+    updated_data = {**current_user_data, **data}
+
+    # Ensure data types are correct
+    if 'current_weight' in updated_data:
+        updated_data['current_weight'] = int(updated_data['current_weight'])
+    if 'target_weight' in updated_data:
+        updated_data['target_weight'] = float(updated_data['target_weight'])
+    if 'current_height' in updated_data:
+        updated_data['current_height'] = float(updated_data['current_height'])
+    if 'age' in updated_data:
+        updated_data['age'] = int(updated_data['age'])
+
+    # Remove 'id' field if present to avoid updating the primary key
+    if 'id' in updated_data:
+        del updated_data['id']
+
+    response = supabase.table('users').update(updated_data).eq('auth_id', user_id).execute()
+    return jsonify(response.data)
+
+#OTHERS
 @app.route('/user-receipts/<int:user_id>', methods=['GET'])
 def get_user_receipts(user_id):
     receipts = supabase.table('receipts').select('*').eq('user_id', user_id).execute()

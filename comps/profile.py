@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 from supabase import create_client
-from backend.test import get_user_info
+from backend.test import get_user_info, update_user_info
 
 load_dotenv()
 
@@ -24,7 +24,10 @@ def show_profile():
         'target_weight': 0.0,
         'current_height': 0.0,
         'time_to_target': "3 months",
-        'daily_calories': 2200
+        'daily_calories': 2200,
+        'age': 25,
+        'dietary_preference': 'Vegetarian',
+        'sex': 'Male'
     }
 
     # Initialize session state if values don't exist
@@ -36,7 +39,7 @@ def show_profile():
     user_data = get_user_info(user_id)
 
     if user_data:
-        profile_keys = ['first_name', 'last_name', 'username', 'email', 'current_weight', 'target_weight', 'current_height', 'time_to_target']
+        profile_keys = ['first_name', 'last_name', 'username', 'email', 'current_weight', 'target_weight', 'current_height', 'time_to_target', 'age', 'dietary_preference', 'sex']
         for key in profile_keys:
             if key in user_data and user_data[key] is not None:
                 st.session_state[key] = user_data[key]
@@ -137,6 +140,25 @@ def show_profile():
                 help="Calculated based on your goals and current metrics"
             )
 
+            age = st.number_input(
+                "Age 🎂",
+                min_value=0,
+                max_value=120,
+                value=st.session_state.age,
+                step=1,
+                help="Enter your age"
+            )
+
+            # Dietary preference dropdown
+            dietary_preference = st.selectbox(
+                "Dietary Preference 🥗",
+                options=['vegetarian', 'vegan', 'halal', 'kosher', 'gluten-free', 'dairy-free'],
+                index=['vegetarian', 'vegan', 'halal', 'kosher', 'gluten-free', 'dairy-free'].index(
+                    st.session_state.dietary_preference.lower() if st.session_state.dietary_preference else 'vegetarian'
+                ),
+                help="Select your dietary preference"
+            )
+
         with col4:
             target_weight = st.number_input(
                 "Target Weight 🎯",
@@ -153,6 +175,14 @@ def show_profile():
                 help="Select your target timeframe"
             )
 
+            # Sex dropdown (male, female, other)
+            sex = st.selectbox(
+                "Sex",
+                options=['Male', 'Female', 'Other'],
+                index=['Male', 'Female', 'Other'].index(st.session_state.sex),
+                help="Select your sex"
+            )
+
         # Center the submit button
         submit_button = st.form_submit_button("💾 Save Changes")
 
@@ -165,5 +195,53 @@ def show_profile():
             st.session_state.current_weight = current_weight
             st.session_state.target_weight = target_weight
             st.session_state.time_to_target = time_to_target
-            st.success("✅ Profile updated successfully!")
+            st.session_state.age = age
+            st.session_state.dietary_preference = dietary_preference
+            st.session_state.sex = sex
+
+            # Prepare data for update
+            update_data = {
+                'first_name': first_name[:100] if first_name else None,  # VARCHAR(100)
+                'last_name': last_name[:100] if last_name else None,     # VARCHAR(100)
+                'username': username[:50] if username else None,          # VARCHAR(50)
+                'current_height': float(current_height) if current_height else None,  # DECIMAL(5,2)
+                'current_weight': int(current_weight) if current_weight else None,    # INTEGER NOT NULL
+                'target_weight': float(target_weight) if target_weight else None,     # DECIMAL(5,2)
+                'time_to_target': time_to_target,  # VARCHAR(20) with CHECK constraint
+                'age': int(age) if age else None,  # INTEGER with CHECK constraint
+                'dietary_preference': dietary_preference.lower(),  # VARCHAR(50) with CHECK constraint
+                'sex': sex  # TEXT with CHECK constraint
+            }
+
+            # Validate constraints before sending
+            if update_data['current_weight'] is None:
+                st.error("❌ Current weight is required")
+                return
+
+            if update_data['time_to_target'] not in ['1 month', '3 months', '6 months', '12 months']:
+                st.error("❌ Invalid time to target value")
+                return
+
+            if update_data['dietary_preference'] not in ['vegetarian', 'vegan', 'halal', 'kosher', 'gluten-free', 'dairy-free']:
+                st.error("❌ Invalid dietary preference")
+                return
+
+            if update_data['sex'] not in ['Male', 'Female', 'Other']:
+                st.error("❌ Invalid sex value")
+                return
+
+            if update_data['age'] and (update_data['age'] < 1 or update_data['age'] > 120):
+                st.error("❌ Age must be between 1 and 120")
+                return
+
+            # Update user information
+            update_response = update_user_info(user_id, update_data)
+            with st.spinner("Updating profile..."):
+                if update_response:
+                    if isinstance(update_response, dict) and 'error' in update_response:
+                        st.error(f"❌ Failed to update profile: {update_response['error']}")
+                    else:
+                        st.success("✅ Profile updated successfully!")
+                else:
+                    st.error("❌ Failed to update profile: No response from server")
 
