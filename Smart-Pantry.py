@@ -264,6 +264,7 @@ def show_sidebar():
         if st.button("Logout"):
             st.session_state.logged_in = False
             st.session_state.current_user = None
+            st.session_state.user_id = None  # Reset user_id
             st.session_state.page = 'landing'
             st.rerun()  # Changed from st.experimental_rerun()
 

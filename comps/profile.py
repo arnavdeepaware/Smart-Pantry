@@ -3,6 +3,7 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 from supabase import create_client
+from backend.test import get_user_info
 
 load_dotenv()
 
@@ -12,7 +13,34 @@ SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def show_profile():
-    
+
+    # Initialize session state with default values
+    default_values = {
+        'first_name': "",
+        'last_name': "",
+        'username': "",
+        'email': "",
+        'current_weight': 0.0,
+        'target_weight': 0.0,
+        'current_height': 0.0,
+        'time_to_target': "3 months",
+        'daily_calories': 2200
+    }
+
+    # Initialize session state if values don't exist
+    for key, value in default_values.items():
+        if key not in st.session_state:
+            st.session_state[key] = value
+
+    user_id = st.session_state.user_id
+    user_data = get_user_info(user_id)
+
+    if user_data:
+        profile_keys = ['first_name', 'last_name', 'username', 'email', 'current_weight', 'target_weight', 'current_height', 'time_to_target']
+        for key in profile_keys:
+            if key in user_data and user_data[key] is not None:
+                st.session_state[key] = user_data[key]
+
     st.title("👤 Profile")
     st.write("<div style='text-align: left;'>Update your personal information and health goals below.</div>", unsafe_allow_html=True)
     st.markdown("""
@@ -44,24 +72,6 @@ def show_profile():
         }
     </style>
     """, unsafe_allow_html=True)
-
-    # Initialize session state with default values
-    default_values = {
-        'first_name': "John",
-        'last_name': "Doe",
-        'username': "JohnDoe123",
-        'email': "john.doe@example.com",  # Add this
-        'current_weight': 70,
-        'target_weight': 65.00,
-        'current_height': 170.00,
-        'time_to_target': "3 months",
-        'daily_calories': 2000  # Add this
-    }
-
-    # Initialize session state if values don't exist
-    for key, value in default_values.items():
-        if key not in st.session_state:
-            st.session_state[key] = value
 
     # Create a form with custom styling
     with st.form("profile_form"):
@@ -108,21 +118,21 @@ def show_profile():
                 "Current Height 📏",
                 min_value=0.0,
                 max_value=300.0,
-                value=float(st.session_state.current_height),
+                value=float(st.session_state.current_height) if st.session_state.current_height is not None else 0.0,
                 help="Your current height in centimeters"
             )
             current_weight = st.number_input(
                 "Current Weight ⚖️",
                 min_value=0.0,
                 max_value=500.0,
-                value=float(st.session_state.current_weight),
+                value=float(st.session_state.current_weight) if st.session_state.current_weight is not None else 0.0,
                 help="Your current weight in kilograms"
             )
 
             # Move daily calories to first column
             daily_calories = st.number_input(
                 "Daily Calories Budget 🔥",
-                value=int(st.session_state.daily_calories),
+                value=int(st.session_state.daily_calories) if st.session_state.daily_calories is not None else 2200,
                 disabled=True,
                 help="Calculated based on your goals and current metrics"
             )
@@ -132,7 +142,7 @@ def show_profile():
                 "Target Weight 🎯",
                 min_value=0.0,
                 max_value=500.0,
-                value=float(st.session_state.target_weight),
+                value=float(st.session_state.target_weight) if st.session_state.target_weight is not None else 0.0,
                 help="Your goal weight in kilograms"
             )
 
