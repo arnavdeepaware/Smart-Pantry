@@ -114,7 +114,7 @@ def show_landing():
     with st.container():
         st.markdown("<div style='margin-top: 15vh;'></div>", unsafe_allow_html=True)
         st.markdown("<h1 class='title' style='text-align: center;'>Welcome to Smart Pantry!!</h1>", unsafe_allow_html=True)
-        st.markdown("<p class='subtitle' style='text-align: center;'>Your Digital Solution for Smart Kitchen Management</p>", unsafe_allow_html=True)
+        st.markdown("<p class='subtitle' style='text-align: center;'>Snack Smarter, Waste Lesser!</p>", unsafe_allow_html=True)
         # Create three columns to center the buttons
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
@@ -128,34 +128,35 @@ def show_landing():
         promo1, promo2, promo3 = st.columns(3)
 
         with promo1:
-            st.markdown("### 🔍 Smart Inventory")
-            st.write("""
-                Track your pantry items automatically.
-                Never run out of essentials again!
-                - Real-time tracking
-                - Low stock alerts
-                - Shopping suggestions
-            """)
+        st.markdown("### 🔍 Smart Pantry Tracking")
+        st.write("""
+            Keep track of your pantry ingredients effortlessly.
+            Never let food go to waste again!
+            - Automatic pantry logging from receipts
+            - Expiry date reminders
+            - Real-time inventory updates
+        """)
 
-        with promo2:
-            st.markdown("### 📊 Usage Analytics")
-            st.write("""
-                Understand your kitchen better.
-                Make data-driven decisions!
-                - Consumption patterns
-                - Cost analysis
-                - Waste reduction tips
-            """)
+    with promo2:
+        st.markdown("### 📊 Personalized Meal Insights")
+        st.write("""
+            Understand your food consumption and health goals.
+            Make every meal count!
+            - Custom recipe suggestions based on pantry items
+            - Nutritional analysis for balanced meals
+            - Waste-reduction tips to maximize your ingredients
+        """)
 
-        with promo3:
-            st.markdown("### 🌟 Smart Features")
-            st.write("""
-                Make cooking easier than ever.
-                Let AI help you in the kitchen!
-                - Recipe suggestions
-                - Meal planning
-                - Expiry date tracking
-            """)
+    with promo3:
+        st.markdown("### 🌟 Sustainable Meal Planning")
+        st.write("""
+            Make cooking easy, sustainable, and nutritious.
+            Let SnackGPT help you eat better while reducing waste!
+            - Recipe ideas with available ingredients
+            - Health and fitness goal alignment
+            - Smart shopping suggestions for missing ingredients
+        """)
+
 
 def show_login():
     with st.container():

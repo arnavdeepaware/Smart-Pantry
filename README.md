@@ -1,5 +1,6 @@
 # 🧑‍🍳🍲 SnackGPT
 
+## Snack Smarter, Waste Lesser!
 
 ### ✨ **What is SnackGPT:**
 **SnackGPT** empowers you to track your pantry, scan receipts for ingredients, and discover sustainable recipes that fit your health goals while reducing food waste. It’s your personal assistant for reducing waste, tracking ingredients, and creating healthy recipes that help you stick to your diet plan! 🌿💪
@@ -43,7 +44,7 @@ Together, we can create a world where sustainability and nutrition are effortles
   - Set your current weight, target weight, and time frame 📉
   - Get meal suggestions that fit your diet plan 🥗
 
-- **Smart Shopping**:  
+- **Smart Shopping**:
   - Missing an ingredient? We suggest nearby stores to buy what you need 🛒
 ---
 
