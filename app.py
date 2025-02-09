@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 from pages.dashboard import show_dashboard
 from pages.ingredients import show_ingredients
-from pages.scanner import show_scanner
+from pages.profile import show_profile
 
 products_data = {
     "Product": ["Milk", "Eggs", "Spinach", "Chicken Breast"],
@@ -86,14 +86,13 @@ def pantry_dashboard():
 
     st.write("</table>", unsafe_allow_html=True)
     
-def profile_page():
-    st.title("Profile Page")
-    st.write("Edit your profile information.")
-
 def main():
+    if 'page' not in st.session_state:
+        st.session_state.page = "Dashboard"
+        
     st.sidebar.title("Smart Pantry")
-    options = ["Sign Up", "Sign In", "My Pantry Dashboard", "Profile Page", "Dashboard", "Ingredients", "Scanner"]
-    choice = st.sidebar.radio("Select a Page", options)
+    options = ["Sign Up", "Sign In", "My Pantry Dashboard", "Profile Page", "Dashboard", "Ingredients"]
+    choice = st.sidebar.radio("Select a Page", options, key="page")
 
     if choice == "Sign Up":
         signup()
@@ -102,7 +101,7 @@ def main():
     elif choice == "My Pantry Dashboard":
         pantry_dashboard()
     elif choice == "Profile Page":
-        profile_page()
+        show_profile()
     elif choice == "Dashboard":
         show_dashboard()
     elif choice == "Ingredients":
