@@ -9,6 +9,13 @@ from supabase import create_client
 import os
 from dotenv import load_dotenv
 
+# Page configuration
+st.set_page_config(
+    page_title="Smart Pantry",
+    page_icon="🏠",
+    layout="centered"
+)
+
 
 load_dotenv()
 
@@ -17,12 +24,7 @@ key = os.getenv("SUPABASE_KEY")
 
 supabase = create_client(url, key)
 
-# Page configuration
-st.set_page_config(
-    page_title="Smart Pantry",
-    page_icon="🏠",
-    layout="centered"
-)
+
 
 # Custom CSS for styling
 st.markdown("""
