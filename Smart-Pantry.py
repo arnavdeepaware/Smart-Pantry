@@ -193,6 +193,7 @@ def show_signup():
             new_username = st.text_input("Choose Username", key="signup_username")
             new_password = st.text_input("Choose Password", type="password", key="signup_password")
             confirm_password = st.text_input("Confirm Password", type="password", key="signup_confirm_password")
+
             if st.button("Sign Up", use_container_width=True, key="signup_button"):
                 st.session_state.signup_submitted = True
                 if all([email, new_username, new_password, confirm_password]):
@@ -202,23 +203,26 @@ def show_signup():
                                 "email": email,
                                 "password": new_password
                             })
+
                             if response.user:
                                 user_id = response.user.id
-
                                 user_data = {
                                     "auth_id": user_id,
-
                                     "username": new_username,
                                     "email": email
                                 }
 
                                 insert_result = supabase.table("users").insert(user_data).execute()
 
-                                if insert_result.status_code == 201:
+                                if insert_result.data:
                                     st.session_state.logged_in = True
                                     st.session_state.current_user = new_username
                                     st.session_state.page = 'profile'
-                                    st.experimental_rerun()
+                                    st.rerun()
+                                else:
+                                    st.error("Failed to create account. Please try again.")
+                            else:
+                                st.error("Sign-up failed. Please try again later.")
                         else:
                             st.error("Please enter a valid email address")
                     else:
