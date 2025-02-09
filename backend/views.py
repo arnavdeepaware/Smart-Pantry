@@ -57,15 +57,6 @@ def get_user(user_id):
     user = supabase.table('users').select('*').eq('auth_id', user_id).execute()
     return jsonify(user.data)
 
-
-@app.route('/get-recipe', methods=['GET'])
-def get_recipe():
-    ingredients = get_ingredients_from_supabase()
-    if not ingredients:
-        return jsonify({"error": "No ingredients found in pantry."}), 400
-    recipe = generate_recipe(ingredients)
-    return jsonify({"recipe": recipe})
-
 @app.route('/user-receipts/<int:user_id>', methods=['GET'])
 def get_user_receipts(user_id):
     receipts = supabase.table('receipts').select('*').eq('user_id', user_id).execute()

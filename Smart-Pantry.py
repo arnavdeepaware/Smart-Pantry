@@ -181,6 +181,7 @@ def show_login():
                         if response.user:
                             st.session_state.logged_in = True
                             st.session_state.current_user = email
+                            st.session_state.user_id = response.user.id  # Save user_id
                             st.session_state.active_page = "My Profile"
                             st.success("Successfully logged in!")
                             st.rerun()
@@ -230,6 +231,7 @@ def show_signup():
                                 if insert_result.data:
                                     st.session_state.logged_in = True
                                     st.session_state.current_user = new_username
+                                    st.session_state.user_id = user_id  # Save user_id
                                     st.session_state.page = "My Profile"
                                     st.rerun()
                                 else:
