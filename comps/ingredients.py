@@ -6,6 +6,18 @@ import numpy as np
 from PIL import Image
 import backend.recognize as recognize  # Add this import
 from comps.scanner import img_to_food_items
+import os
+from dotenv import load_dotenv
+from supabase import create_client
+
+
+load_dotenv()
+
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 if 'sub_page' not in st.session_state:
     st.session_state.sub_page = None
@@ -17,10 +29,11 @@ if 'upload_window_open' not in st.session_state:
     st.session_state.upload_window_open = False
 
 # Modify the show_scanner_container function
+
+
 def show_scanner_container():
     with st.container():
         st.subheader("Receipt Scanner")
-        
         uploaded_file = st.file_uploader("Upload a receipt image", type=["png", "jpg", "jpeg"])
         if uploaded_file:
             # Process the image
@@ -28,8 +41,43 @@ def show_scanner_container():
                 food_items = img_to_food_items(uploaded_file)
                 if food_items:
                     st.success('Receipt processed successfully! 🎉')
-                    return food_items
 
+                    # Parse food items
+                    parsed_items = []
+                    for item in food_items:
+                        try:
+                            parts = item.rsplit(' ', 2)
+                            if len(parts) == 3:
+                                food_name, price, unit = parts
+                                quantity = 1
+                            elif len(parts) == 2:
+                                food_name, price = parts
+                                unit = None
+                                quantity = 1
+                            else:
+                                continue
+
+                            parsed_items.append((food_name, float(price), quantity, unit))
+                        except ValueError:
+                            st.warning(f"Skipping invalid item: {item}")
+                            continue
+
+                    if parsed_items:
+                        try:
+                            response = supabase.table("receipt_items").insert(
+                                [{"item_name": food_name, "quantity": quantity, "unit": unit} for food_name, price, quantity, unit in parsed_items]
+                            ).execute()
+
+                            if response.status_code == 201:
+                                st.success("Food items successfully added to the database!")
+                            else:
+                                st.error(f"Failed to add items to the database. Status: {response.status_code}")
+                        except Exception as e:
+                            st.error(f"Error inserting into database: {e}")
+                    else:
+                        st.warning("No valid food items to add.")
+                else:
+                    st.error("No food items found in the receipt.")
 
 def show_ingredients():
     # Add this at the beginning of your show_ingredients function or at the top of the file
