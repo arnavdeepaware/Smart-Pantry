@@ -40,6 +40,10 @@ def show_scanner_container():
                 st.text(food_items)
 
 def show_ingredients():
+    # Add this at the beginning of your show_ingredients function or at the top of the file
+    if 'add_clicked' not in st.session_state:
+        st.session_state.add_clicked = False
+
     # Fetch ingredients from Supabase
     ingredients = get_ingredients_from_supabase()
 

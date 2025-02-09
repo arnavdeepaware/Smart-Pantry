@@ -95,6 +95,8 @@ if 'current_user' not in st.session_state:
     st.session_state.current_user = None
 if 'active_page' not in st.session_state:
     st.session_state.active_page = 'Home'
+if 'sub_page' not in st.session_state:
+    st.session_state.sub_page = None
 
 def show_landing():
     # Create a container for centered content

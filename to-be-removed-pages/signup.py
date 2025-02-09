@@ -7,7 +7,7 @@ url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
-st.set_page_config(page_title="Smart Pantry", page_icon="🍲", layout="wide")
+#st.set_page_config(page_title="Smart Pantry", page_icon="🍲", layout="wide")
 
 # Create a Sign Up page
 st.title("Sign Up")

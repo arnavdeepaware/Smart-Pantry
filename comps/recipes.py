@@ -3,7 +3,7 @@ import requests
 
 FLASK_API_URL = "http://127.0.0.1:5000"
 
-st.set_page_config(page_title="Suggested Recipes", page_icon="🍽️", layout="centered")
+#st.set_page_config(page_title="Suggested Recipes", page_icon="🍽️", layout="centered")
 
 def show_recipes_board():
     
