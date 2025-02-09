@@ -3,14 +3,34 @@ import pandas as pd
 from backend.views import get_ingredients_from_supabase
 
 def show_ingredients():
-    st.title("Ingredients")
-    st.write("Welcome to the ingredients page!")
-    
-    st.subheader("My Ingredients")
-    st.write("Here's a list of the ingredients currently in your pantry:")
 
     # Fetch ingredients from Supabase
     ingredients = get_ingredients_from_supabase()
+
+    st.title("Pantry")
+
+    # Create a container for buttons with custom styling
+    st.markdown("""
+        <style>
+        .stButton > button {
+            min-width: 120px !important;
+            white-space: nowrap !important;
+            padding: 0.25rem 0.5rem !important;
+            text-align: center !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Create horizontal layout for buttons
+    col1, col2, col3 = st.columns([0.76, 0.12, 0.12])  # Same ratio as dashboard.py
+    with col1:
+        st.subheader("Ingredients List")
+    with col2:
+        if st.button("Add", key="add_ingredient", help="Add items", use_container_width=False):
+            show_add_item_popup()
+    with col3:
+        if st.button("Edit", key="edit_ingredient", help="Edit items", use_container_width=False):
+            st.info("Edit functionality coming soon!")
 
     # If data is available, display it
     if ingredients:
@@ -47,9 +67,6 @@ def show_ingredients():
                 st.write(f"Item Unit: {item_unit}")
                 st.success("Item Added!")
                 # You can also implement the function to actually add the item to Supabase here.
-
-    if st.button("Add Item"):
-        show_add_item_popup()
 
     # Styling
     st.markdown(
